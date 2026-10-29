@@ -1,0 +1,12 @@
+{
+  "title": "FizzBuzz",
+  "functionName": "fizz",
+  "timeLimitMs": 500,
+  "tests": [
+    { "name": "returns number as string", "input": [1], "expected": "1" },
+    { "name": "multiple of 3", "input": [3], "expected": "Fizz" },
+    { "name": "multiple of 5", "input": [5], "expected": "Buzz" },
+    { "name": "multiple of 15", "input": [15], "expected": "FizzBuzz", "hidden": true },
+    { "name": "large input", "input": [300], "expected": "FizzBuzz", "hidden": true }
+  ]
+}

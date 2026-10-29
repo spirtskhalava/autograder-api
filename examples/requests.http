@@ -1,0 +1,20 @@
+### Create an assignment
+POST http://localhost:3000/assignments
+Content-Type: application/json
+
+< ./fizzbuzz-assignment.json
+
+### Submit a solution
+POST http://localhost:3000/assignments/1/submissions
+Content-Type: application/json
+
+{
+  "studentId": "ana",
+  "code": "function fizz(n) { return n % 3 === 0 ? 'Fizz' : String(n); }"
+}
+
+### Student's history
+GET http://localhost:3000/assignments/1/submissions?studentId=ana
+
+### Stats for the instructor dashboard
+GET http://localhost:3000/assignments/1/stats
