@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    ports: ["3000:3000"]
+    volumes: ["grader-data:/data"]
+    # Defense in depth for running untrusted code (see docs/DECISIONS.md, D1)
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 512m
+    pids_limit: 128
+volumes:
+  grader-data:

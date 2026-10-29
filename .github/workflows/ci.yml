@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t autograder-api .
+      - name: Smoke test the container
+        run: |
+          docker run -d --name api -p 3000:3000 autograder-api
+          for i in $(seq 1 20); do curl -sf localhost:3000/health && break; sleep 1; done
+          curl -sf -X POST localhost:3000/assignments -H 'content-type: application/json' \
+            --data @examples/fizzbuzz-assignment.json
+          curl -sf -X POST localhost:3000/assignments/1/submissions -H 'content-type: application/json' \
+            -d '{"studentId":"ci","code":"function fizz(n){return n%15===0?\"FizzBuzz\":n%3===0?\"Fizz\":n%5===0?\"Buzz\":String(n)}"}' \
+            | tee /dev/stderr | grep -q '"score":100'
+      - if: always()
+        run: docker logs api || true
